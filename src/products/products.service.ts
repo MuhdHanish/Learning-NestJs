@@ -15,6 +15,7 @@ export class ProductService {
     }
 
     getProducts(): ProductBestPractice[] {
+        // Cant edit the data on the controller
         const products = JSON.parse(JSON.stringify(this.products));
         return products;
     }
