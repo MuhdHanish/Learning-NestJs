@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ProductService } from './products.service';
-import { ProductBestPractice } from './product.model';
 
 interface ICompleteBody {
   title: string;
@@ -30,25 +29,25 @@ export class ProductController {
   @Post()
   // Extracting complete data from the request body using the @Body decorator.
   // The ICompleteBody interface defines the expected structure of the request body.
-  insertProduct(@Body() completeBody: ICompleteBody): { id: string } {
+  async insertProduct(@Body() completeBody: ICompleteBody) {
     const { title, description, price } = completeBody;
-    const id = this.prodcutService.insertProduct(title, description, price);
-    return { id };
+    const product = await this.prodcutService.insertProduct(title, description, price);
+    return { product };
   }
 
   // Fetching the list of products from the productService.
   // The returned array is wrapped in an object for a consistent response format.
   @Get()
-  getProducts(): { products: ProductBestPractice[] } {
-    const products = this.prodcutService.getProducts();
+  async getProducts() {
+    const products = await this.prodcutService.getProducts();
     return { products };
   }
 
   // Endpoint to retrieve a product by its unique identifier (id) from the URL parameter.
   @Get(`:id`)
   // Extracting the 'id' parameter from the request URL.
-  getProductById(@Param('id') id: string): { product: ProductBestPractice } {
-    const product = this.prodcutService.getProductById(id);
+  async getProductById(@Param('id') id: string) {
+    const product = await this.prodcutService.getProductById(id);
     return { product };
   }
 
@@ -56,17 +55,17 @@ export class ProductController {
   @Patch(`:id`)
     // Extracting the 'id' parameter from the request URL.
     // Extracting complete data from the request body using the @Body decorator.
-  updateProduct(
-    @Param('id') id: string,  @Body() completeBody: ICompleteBody): { product: ProductBestPractice } {
-    const product = this.prodcutService.updateProduct(id, completeBody);
+  async updateProduct(
+    @Param('id') id: string,  @Body() completeBody: ICompleteBody) {
+    const product = await this.prodcutService.updateProduct(id, completeBody);
     return { product };
   }
 
   // Endpoint to delete a product using its unique identifier (id) from the URL parameter.
   @Delete(`:id`)
   // Extracting the 'id' parameter from the request URL.
-  deleteProduct(@Param('id') id: string): { product: ProductBestPractice }{
-    const product = this.prodcutService.deleteProduct(id);
+  async deleteProduct(@Param('id') id: string) {
+    const product = await this.prodcutService.deleteProduct(id);
     return { product };
   }
 }
