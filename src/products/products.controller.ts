@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ProductService } from './products.service';
 import { ProductBestPractice } from './product.model';
 
@@ -59,6 +59,14 @@ export class ProductController {
   updateProduct(
     @Param('id') id: string,  @Body() completeBody: ICompleteBody): { product: ProductBestPractice } {
     const product = this.prodcutService.updateProduct(id, completeBody);
+    return { product };
+  }
+
+  // Endpoint to delete a product using its unique identifier (id) from the URL parameter.
+  @Delete(`:id`)
+  // Extracting the 'id' parameter from the request URL.
+  deleteProduct(@Param('id') id: string): { product: ProductBestPractice }{
+    const product = this.prodcutService.deleteProduct(id);
     return { product };
   }
 }
