@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ProductService } from './products.service';
 import { ProductBestPractice } from './product.model';
 
@@ -13,8 +13,10 @@ interface ICompleteBody {
 export class ProductController {
   constructor(private readonly prodcutService: ProductService) {}
 
-  //   Taking data from the body one by one
+  // Endpoint to add a new product by providing individual properties in the request body.
   //   @Post()
+  // Extracting data from the request body one by one using the @Body decorator.
+  // Each property (title, description, price) is specified individually.
   //   insertProduct(
   //     @Body('title') title: string,
   //     @Body('description') description: string,
@@ -24,17 +26,39 @@ export class ProductController {
   //     return { id };
   //   }
 
-  //   Taking complete data from the body
+  // Endpoint to add a new product by providing complete data in the request body.
   @Post()
+  // Extracting complete data from the request body using the @Body decorator.
+  // The ICompleteBody interface defines the expected structure of the request body.
   insertProduct(@Body() completeBody: ICompleteBody): { id: string } {
     const { title, description, price } = completeBody;
     const id = this.prodcutService.insertProduct(title, description, price);
     return { id };
   }
 
+  // Fetching the list of products from the productService.
+  // The returned array is wrapped in an object for a consistent response format.
   @Get()
   getProducts(): { products: ProductBestPractice[] } {
     const products = this.prodcutService.getProducts();
     return { products };
+  }
+
+  // Endpoint to retrieve a product by its unique identifier (id) from the URL parameter.
+  @Get(`:id`)
+  // Extracting the 'id' parameter from the request URL.
+  getProductById(@Param('id') id: string): { product: ProductBestPractice } {
+    const product = this.prodcutService.getProductById(id);
+    return { product };
+  }
+
+  // Endpoint to update a product using its unique identifier (id) from the URL parameter.
+  @Patch(`:id`)
+    // Extracting the 'id' parameter from the request URL.
+    // Extracting complete data from the request body using the @Body decorator.
+  updateProduct(
+    @Param('id') id: string,  @Body() completeBody: ICompleteBody): { product: ProductBestPractice } {
+    const product = this.prodcutService.updateProduct(id, completeBody);
+    return { product };
   }
 }
