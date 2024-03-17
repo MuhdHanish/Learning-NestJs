@@ -1,9 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Book } from './schemas/book.schema';
-import { Query } from "express-serve-static-core";
 
 @Injectable()
 export class BookService {
@@ -12,7 +11,7 @@ export class BookService {
         private readonly bookModel: Model<Book>
     ) { }
 
-    async findBooks(query: Query): Promise<Book[]> {
+    async findBooks(query: { search: string; page: string; }): Promise<Book[]> {
 
         const resPerPage = 2;
         const currentPage = Number(query.page) || 1;
@@ -34,6 +33,10 @@ export class BookService {
     }
 
     async findBookById(id: string): Promise<Book> {
+        const isValidId = mongoose.isValidObjectId(id);
+        if (!isValidId) {
+            throw new BadRequestException('The provided ID is not valid');
+        }
         const book = await this.bookModel.findById(id).exec();
         if (!book) {
             throw new NotFoundException('Book not found');

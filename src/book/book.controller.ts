@@ -3,14 +3,13 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query  } from '@nest
 import { BookService } from './book.service';
 import { Book } from './schemas/book.schema';
 import { CreateBookDTO, UpdateBookDTO } from './dto';
-import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Controller('books')
 export class BookController {
     constructor(private readonly bookService: BookService) { }
     
     @Get()
-    async getBooks(@Query() query: ExpressQuery): Promise<{ books: Book[] }>{
+    async getBooks(@Query() query: { search: string; page: string; }): Promise<{ books: Book[] }>{
         const books = await this.bookService.findBooks(query);
         return { books };
     }
