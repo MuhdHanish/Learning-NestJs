@@ -3,6 +3,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Book } from './schemas/book.schema';
+import { CreateBookDTO, UpdateBookDTO } from './dto';
 
 @Injectable()
 export class BookService {
@@ -24,10 +25,10 @@ export class BookService {
             }
         } : {};
         
-        return this.bookModel.find({...options}).limit(resPerPage).skip(skip).exec();
+        return this.bookModel.find({ ...options }).limit(resPerPage).skip(skip).exec();
     }
 
-    async createBook(bookData: Book): Promise<Book> {
+    async createBook(bookData: CreateBookDTO): Promise<Book> {
         const createdBook = await this.bookModel.create(bookData);
         return createdBook.toJSON();
     }
@@ -44,8 +45,8 @@ export class BookService {
         return book.toJSON();
     }
 
-    async updateById(id: string,bookData: Book): Promise<Book> {
-        const book = await this.bookModel.findByIdAndUpdate(id,bookData,{ new: true, runValidators: true }).exec();
+    async updateById(id: string, bookData: UpdateBookDTO): Promise<Book> {
+        const book = await this.bookModel.findByIdAndUpdate(id, bookData, { new: true, runValidators: true }).exec();
         if (!book) {
             throw new NotFoundException('Book not found');
         }
