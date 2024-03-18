@@ -4,9 +4,13 @@ import { BookController } from './book.controller';
 import { BookService } from './book.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { bookSchema } from './schemas/book.schema';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Book', schema: bookSchema }])],
+  imports: [
+    AuthModule, 
+    MongooseModule.forFeature([{ name: 'Book', schema: bookSchema }])
+  ],
   controllers: [BookController],
   providers: [BookService],
 })

@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Book } from './schemas/book.schema';
 import { CreateBookDTO, UpdateBookDTO } from './dto';
+import { User } from '../auth/schemas/user.schema';
 
 @Injectable()
 export class BookService {
@@ -28,8 +29,9 @@ export class BookService {
         return this.bookModel.find({ ...options }).limit(resPerPage).skip(skip).exec();
     }
 
-    async createBook(bookData: CreateBookDTO): Promise<Book> {
-        const createdBook = await this.bookModel.create(bookData);
+    async createBook(bookData: CreateBookDTO, user: User): Promise<Book> {
+        const data = Object.assign(bookData, { user: user._id });
+        const createdBook = await this.bookModel.create(data);
         return createdBook.toJSON();
     }
 
@@ -45,18 +47,26 @@ export class BookService {
         return book.toJSON();
     }
 
-    async updateById(id: string, bookData: UpdateBookDTO): Promise<Book> {
-        const book = await this.bookModel.findByIdAndUpdate(id, bookData, { new: true, runValidators: true }).exec();
+    async updateById(id: string, bookData: UpdateBookDTO, user: User): Promise<Book> {
+        const isValidId = mongoose.isValidObjectId(id);
+        if (!isValidId) {
+          throw new BadRequestException('The provided ID is not valid');
+        }
+        const book = await this.bookModel.findOneAndUpdate({ _id: id, user: user._id }, bookData, { new: true, runValidators: true }).exec();
         if (!book) {
-            throw new NotFoundException('Book not found');
+            throw new UnprocessableEntityException('Book not found or you do not have permission to update it',);
         }
         return book.toJSON();
     }
 
-    async deleteById(id: string) {
-        const book = await this.bookModel.findByIdAndDelete(id).exec();
+    async deleteById(id: string, user: User) {
+        const isValidId = mongoose.isValidObjectId(id);
+        if (!isValidId) {
+          throw new BadRequestException('The provided ID is not valid');
+        }
+        const book = await this.bookModel.findOneAndDelete({ _id: id, user: user._id }).exec();
         if (!book) {
-          throw new NotFoundException('Book not found');
+          throw new UnprocessableEntityException('Book not found or you do not have permission to delete it');
         }
         return book;
     }

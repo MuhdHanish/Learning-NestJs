@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEmpty, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Category } from '../schemas/book.schema';
+import { User } from '../../auth/schemas/user.schema';
 
 export class UpdateBookDTO {
   @IsString()
@@ -22,4 +23,7 @@ export class UpdateBookDTO {
   @IsNumber()
   @IsOptional()
   readonly price: number;
+
+  @IsEmpty({ message: 'User ID should not be included in the request body' })
+  readonly user: User;
 }

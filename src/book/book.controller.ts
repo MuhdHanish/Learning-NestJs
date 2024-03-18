@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query  } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards  } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './schemas/book.schema';
 import { CreateBookDTO, UpdateBookDTO } from './dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('books')
 export class BookController {
@@ -21,20 +22,23 @@ export class BookController {
     }
 
     @Post()
-    async createBook(@Body() bookData: CreateBookDTO): Promise<{ book: Book }>{
-        const book = await this.bookService.createBook(bookData);
+    @UseGuards(AuthGuard('jwt'))
+    async createBook(@Body() bookData: CreateBookDTO, @Req() req): Promise<{ book: Book }>{
+        const book = await this.bookService.createBook(bookData, req.user);
         return { book };
     }
 
     @Patch(':id')
-    async updateBook(@Param('id') id: string, @Body() bookData: UpdateBookDTO): Promise<{ book: Book }>{
-        const book = await this.bookService.updateById(id,bookData);
+    @UseGuards(AuthGuard('jwt'))
+    async updateBook(@Param('id') id: string, @Body() bookData: UpdateBookDTO, @Req() req): Promise<{ book: Book }>{
+        const book = await this.bookService.updateById(id,bookData, req.user);
         return { book };
     }
 
     @Delete(':id')
-    async deleteBook(@Param('id') id: string) {
-        const book = await this.bookService.deleteById(id);
+    @UseGuards(AuthGuard('jwt'))
+    async deleteBook(@Param('id') id: string, @Req() req) {
+        const book = await this.bookService.deleteById(id, req.user);
         return { book };
     }
 }
