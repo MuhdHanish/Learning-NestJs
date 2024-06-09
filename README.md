@@ -227,3 +227,32 @@ export class SomeController {
                                      |                              |
                                      |  - Handler returns response  |
                                      +------------------------------+
+```
+
+## 3. Providers
+
+- Can be injected into constructors if decorated as an `@Injectable`, via dependency injection.
+- Can be a plain value, a class, sync/async fatctor etc.
+- Provider must be provided to a module for them to be usable.
+- Can be exported from a module - and then be available to other modules that import it.
+
+### What is a Service ?
+
+- Defined as a provider. *Not all providers are services*.
+- Common concept within software development and are not exclusive NestJS, JavaScript or back-end development.
+- Singleton when wrapped with `@Injectable()` are provided to a module. That means, the same instance will be the shared across the application acting as a single source of truth.
+- The services are the main source of business logic. For example, a service will be called from a controller to validate data, create an item in the database and return a response.
+
+Example of Providers in Modules:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { SampleOneService, SampleTwoService } from './some.service';
+import { SomeController } from './some.controller';
+
+@Module({
+  controllers: [SomeController],  
+  providers: [SampleOneService, SampleTwoService],  
+})
+export class SomeModule {}
+```
