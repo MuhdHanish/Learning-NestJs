@@ -13,10 +13,10 @@ To define a module in NestJs, use the `@Module` decorator. This decorator provid
 
 ### @Module Decorator Properties
 
--**providers**: Array of providers to be available within the module via dependency injection.
--**controllers**: Array of controllers to be instanciated within the module.
--**exports**: Array of providers to export to other modules.
--**imports**: List of modules required by this module. Any exported provider by these modules will now be available in our module via dependency injection.
+- **providers**: Array of providers to be available within the module via dependency injection.
+- **controllers**: Array of controllers to be instanciated within the module.
+- **exports**: Array of providers to export to other modules.
+- **imports**: List of modules required by this module. Any exported provider by these modules will now be available in our module via dependency injection.
 
 Example of a basic module definition:
 
