@@ -282,3 +282,36 @@ In this example:
 - The `SomeController` class has a dependency on the `SomeService`, which is injected into its constructor.
 - The `SomeService` instance is then available as a property (`this.someService`) within the `SomeController`.
 - We can now call methods or access properties of the `SomeService` instance from within the `SomeController`, such as in the `getSomething` method.
+
+
+## 5. Data Transfer Object (DTO)
+
+- Common concept in software development that is not specific to NestJS.
+- Result in more bulletproof code, as it can be used as a TypeScript type.
+- Do not have any behavior except for storage, retrieval, serialization, and deserialization of their own data.
+- Result in increased performance (although negligible in small applications).
+- Can be useful for data validation.
+- A DTO is *not* a model definition. It defines the shape of the data for a specific case, for example, creating a task.
+- Can be defined using an interface or a class.
+
+### Definitions
+
+- A Data Transfer Object (DTO) is an object that carries data between processes (Wikipedia).
+- A DTO is used to encapsulate data and transfer it from one subsystem of an application to another (StackOverflow).
+- A DTO defines how data will be sent over the network (NestJS Documentation).
+
+### Class VS Interface for DTO's
+
+- Data Transfer Object's (DTO's) can be defined as classes or interfaces.
+- The recommended approach is to use classes, also clearly documented in the NestJS documentation.
+- The reason is that interfaces are a part of TypeScript and therefore are not preserved post-compilation.
+- Classes allow us to do more, and since they are a part of JavaScript, they will be preserved post-compilation.
+- NestJS cannot refer interfaces in run-time, but can refer to classes.
+
+
+### Important Note!
+
+- Data Transfer Objects are *NOT* mandatory.
+- You can still develop application without using DTO's.
+- However, the value they add makes it worthwhile to use them when applicable.
+- Applying the DTO pattern as soon as possible will make it easy for you to maintain and refractor your code.
