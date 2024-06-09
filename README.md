@@ -256,3 +256,29 @@ import { SomeController } from './some.controller';
 })
 export class SomeModule {}
 ```
+
+## 4. Dependency Injection In NestJS
+
+- Any component within the NestJS ecosystem can inject a provider that is decorated with the `@Injectable`.
+- We define the dependencies in the constructor of the class. NestJS will take care of the injection for us, and it will then be available as a class property.
+
+Example demonstrating the usage of dependency injection in a NestJS controller:
+
+```typescript
+import { Controller, Get, Post } from '@nestjs/common';
+import { SomeService } from './some.service';
+
+@Controller('/example')
+export class SomeController {
+  constructor(private someService: SomeService){}
+  @Get()
+  getSomething() {
+    return await this.someService.someting();
+  }
+}
+```
+
+In this example:
+- The `SomeController` class has a dependency on the `SomeService`, which is injected into its constructor.
+- The `SomeService` instance is then available as a property (`this.someService`) within the `SomeController`.
+- We can now call methods or access properties of the `SomeService` instance from within the `SomeController`, such as in the `getSomething` method.
