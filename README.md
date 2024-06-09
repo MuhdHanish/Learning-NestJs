@@ -184,9 +184,9 @@ export class SomeController {
                                      |                              |
                                      |        Route Resolution      |
                                      |                              |
-                                     |  - Determine appropriate    |
-                                     |    controller and handler   |
-                                     |    based on defined routes  |
+                                     |  - Determine appropriate     |
+                                     |    controller and handler    |
+                                     |    based on defined routes   |
                                      +---------------+--------------+
                                                      |
                                                      v
@@ -194,19 +194,20 @@ export class SomeController {
                                      |                              |
                                      |        Controller            |
                                      |                              |
-                                     |  - Receive request          |
-                                     |  - Pass request to handler  |
+                                     |  - Receive request           |
+                                     |  - Pass request to handler   |
                                      +---------------+--------------+
                                                      |
                                                      v
                                      +---------------+--------------+
                                      |                              |
                                      |        Handler Method        |
-                                     |   - Parse Request Data      |
-                                     |   - Execute Business Logic  |
-                                     |   - Retrieve Data           |
-                                     |   - Return Response         |
-                                     |   - Handle Exceptions       |
+                                     |                              |
+                                     |   - Parse Request Data       |
+                                     |   - Execute Business Logic   |
+                                     |   - Retrieve Data            |
+                                     |   - Return Response          |
+                                     |   - Handle Exceptions        |
                                      |                              |
                                      +---------------+--------------+
                                                      |
@@ -215,8 +216,8 @@ export class SomeController {
                                      |                              |
                                      |      Request Processing      |
                                      |                              |
-                                     |  - Handler processes       |
-                                     |    the request             |
+                                     |  - Handler processes         |
+                                     |    the request               |
                                      +---------------+--------------+
                                                      |
                                                      v
@@ -224,5 +225,5 @@ export class SomeController {
                                      |                              |
                                      |       Response Sent          |
                                      |                              |
-                                     |  - Handler returns response |
-                                     +-------------------------------+
+                                     |  - Handler returns response  |
+                                     +------------------------------+
