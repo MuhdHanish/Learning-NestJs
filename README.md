@@ -153,7 +153,7 @@ export class SomeController {
 
 ### What is a Service ?
 
-- Defined as a provider. *Not all providers are services*.
+- Defined as a provider. **Not all providers are services**.
 - Common concept within software development and are not exclusive NestJS, JavaScript or back-end development.
 - Singleton when wrapped with `@Injectable()` are provided to a module. That means, the same instance will be the shared across the application acting as a single source of truth.
 - The services are the main source of business logic. For example, a service will be called from a controller to validate data, create an item in the database and return a response.
@@ -226,7 +226,7 @@ In this example:
 
 ### Important Note!
 
-- Data Transfer Objects are *NOT* mandatory.
+- Data Transfer Objects are **NOT** mandatory.
 - You can still develop application without using DTO's.
 - However, the value they add makes it worthwhile to use them when applicable.
 - Applying the DTO pattern as soon as possible will make it easy for you to maintain and refractor your code.
