@@ -230,3 +230,155 @@ In this example:
 - You can still develop application without using DTO's.
 - However, the value they add makes it worthwhile to use them when applicable.
 - Applying the DTO pattern as soon as possible will make it easy for you to maintain and refractor your code.
+
+## 6. NestJS Pipes
+
+Pipes in NestJS operate on the **arguments** that are to be processed by the route handler, right before the handler is called. Pipes can perform two primary functions:
+
+1. **Data Transformation:** Transforming the data into the desired format.
+2. **Data Validation:** Validating the data against certain criteria.
+
+Pipes can return either the original or modified data to be passed on to the route handler. If the data is invalid or an error occurs, pipes can throw exceptions, which are handled by NestJS and turned into appropriate error responses. Notably, pipes can also be asynchronous.
+
+### Default Pipes in NestJS
+
+NestJS provides several useful pipes within the `@nestjs/common` module:
+
+#### ValidationPipe
+
+This pipe validates an entire object against a class, making it especially useful with Data Transfer Objects (DTOs). If any property cannot be properly mapped (e.g., due to a type mismatch), the validation will fail. This built-in validation pipe is highly beneficial for common use cases.
+
+#### ParseIntPipe
+
+Since arguments are strings by default, this pipe validates that an argument is a number. If successful, the argument is transformed into a **Number** and passed on to the handler.
+
+### Custom Pipe Implementation
+
+To create a custom pipe in NestJS:
+
+1. **Class and Decorator:** Pipes are classes annotated with the `@Injectable()` decorator.
+2. **Implement `PipeTransform`:** Pipes must implement the `PipeTransform` generic interface, requiring a **transform()** method.
+3. **Parameters of `transform()`:** The `transform()` method takes two parameters:
+   - **value:** The value of the processed argument.
+   - **metadata** (optional): An object containing metadata about the argument.
+4. **Return Value or Exception:** The `transform()` method returns data to be passed to the route handler or throws an exception to be sent back to the client.
+
+### Using Pipes
+
+Pipes can be applied in different ways:
+
+#### Handler-Level Pipes
+
+Defined at the handler level using the `@UsePipes()` decorator. These pipes process all parameters for the incoming request.
+
+```typescript
+import { Post, UsePipes, Body } from '@nestjs/common';
+
+@Post()
+@UsePipes(SomePipe)
+createSomething(
+  @Body('something') something
+) {
+  // ...
+}
+```
+
+#### Parameter-Level Pipes
+
+Defined at the parameter level. Only the specific parameter for which the pipe is specified will be processed.
+
+```typescript
+import { Post, Body } from '@nestjs/common';
+
+@Post()
+createSomething(
+  @Body('something', SomePipe) something
+) {
+  // ...
+}
+```
+
+#### Global Pipes
+
+Defined at the application level and applied to all incoming requests.
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+
+async function bootstrap(){
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+#### Parameter-Level vs. Handler-Level Pipes: Which One?
+
+**It depends**.
+
+**Parameter-level pipes** tend to be slimmer and cleaner. However, they often result in extra code added to handlers, which can get messy and hard to maintain.
+
+**Handler-level pipes** require some more code but provide some great benefits:
+
+- They do not require extra code at the parameter level.
+- They are easier to maintain and expand. If the shape of the data changes, it is easy to make the necessary changes within the pipe only.
+- The responsibility of identifying the arguments to process is shifted to one central file - the pipe file.
+- They promote the usage of DTOs (Data Transfer Objects), which is a very good practice.
+```
+                                        +------------------------------+
+                                        |                              |
+                                        |   Incoming HTTP Request      |
+                                        |   Method - POST              |
+                                        |   Body - {                   |
+                                        |    "title": "example"        |
+                                        |   }                          |
+                                        |                              |
+                                        +----------------+-------------+
+                                                        |
+                                                        v
+                                        +---------------+--------------+
+                                        |                              |
+                                        |     Handler is identified    |
+                                        |                              |
+                                        +---------------+--------------+
+                                                        |
+                                                        v
+                                        +---------------+--------------+
+                                        |                              |
+                                        |            Pipe              |
+                                        |                              |
+                                        |  - Validates arguments       |
+                                        |  - Transforms data           |
+                                        |                              |
+                                        +---------------+--------------+
+                                                        |
+                                                        v
+                           +----------------------------+-------------------------+
+                           |                                                      |
+                           v                                                      v
+             +-------------+------------------+                      +------------+----------------+
+             |                                |                      |                            |
+             |         Validation             |                      |        Validation          |
+             |         Successful             |                      |        Failed              |
+             |                                |                      |                              |
+             +-------------+------------------+                      +------------+----------------+
+                           |                                                      |
+                           v                                                      v
+             +-------------+------------------+                      +------------+---------------+
+             |                                |                      |                            |
+             |  Handler is called             |                      |    BadRequestException     |
+             |  SomeController.create()       |                      |    is thrown               |
+             |                                |                      |                            |
+             +-------------+------------------+                      +------------+---------------+
+                           |                                                      |
+                           v                                                      v
+             +-------------+------------------+                      +------------+---------------+
+             |                                |                      |                            |
+             |    HTTP Response Sent          |                      |   HTTP Response Sent       |
+             |    Status: 201                 |                      |   Status: 400              |
+             |                                |                      |                            |
+             +--------------------------------+                      +----------------------------+
+```
