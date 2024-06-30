@@ -369,16 +369,16 @@ bootstrap();
                v                                                      v
  +-------------+------------------+                      +------------+---------------+
  |                                |                      |                            |
- |  Handler is called             |                      |    BadRequestException     |
- |  SomeController.create()       |                      |    is thrown               |
+ |    Handler is called           |                      |    BadRequestException     |
+ |    SomeController.create()     |                      |    is thrown               |
  |                                |                      |                            |
  +-------------+------------------+                      +------------+---------------+
                |                                                      |
                v                                                      v
  +-------------+------------------+                      +------------+---------------+
  |                                |                      |                            |
- |    HTTP Response Sent          |                      |   HTTP Response Sent       |
- |    Status: 201                 |                      |   Status: 400              |
+ |     HTTP Response Sent         |                      |     HTTP Response Sent     |
+ |     Status: 201                |                      |     Status: 400            |
  |                                |                      |                            |
  +--------------------------------+                      +----------------------------+
 ```
